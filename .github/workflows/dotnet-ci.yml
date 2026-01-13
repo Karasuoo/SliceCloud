@@ -23,7 +23,7 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore src/SliceCloud.Web/SliceCloud.Web.csproj
+      run: dotnet restore SliceCloud.sln
 
     - name: Build (Compile check)
-      run: dotnet build src/SliceCloud.Web/SliceCloud.Web.csproj --no-restore --configuration Release
+      run: dotnet build SliceCloud.sln --no-restore --configuration Release
