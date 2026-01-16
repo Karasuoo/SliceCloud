@@ -4,9 +4,9 @@
   
     if (password_input.type === "password") {
       password_input.type = "text";
-      input_toggle.src = "/images/icons/eye.png";
+      input_toggle.src = "/images/icons/visibility.svg";
     } else {
       password_input.type = "password";
-      input_toggle.src = "/images/icons/hidden.png";
+      input_toggle.src = "/images/icons/visibility_off.svg";
     }
   }

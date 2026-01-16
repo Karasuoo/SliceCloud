@@ -18,8 +18,8 @@
                 <div class="mb-4">
                     <div class="d-flex align-items-center">
                         <input type="email" class="form-control" placeholder=" john@exmaple.com" asp-for="Email">
-                        <img src="~/images/icons/user.png"
-                            style="display: inline; margin-left: -23px; vertical-align: middle">
+                        <img src="~/images/icons/person.svg"
+                            style="display: inline; margin-left: -25px; vertical-align: middle">
                     </div>
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
@@ -28,8 +28,8 @@
                     <div class="d-flex align-items-center">
                         <input type="password" class="form-control" asp-for="Password" id="custom-password-input"
                             name="password" placeholder="Password*">
-                        <img src="~/images/icons/hidden.png" id="toggle_button_eye" 
-                            style="display: inline; margin-left: -23px; vertical-align: middle;" class="custom-cursor-pointer" onClick="toggle()">
+                        <img src="~/images/icons/visibility_off.svg" id="toggle_button_eye" 
+                            style="display: inline; margin-left: -25px; vertical-align: middle;" class="custom-cursor-pointer" onClick="toggle()">
 
                     </div>
                     <span asp-validation-for="Password" class="text-danger"></span>
