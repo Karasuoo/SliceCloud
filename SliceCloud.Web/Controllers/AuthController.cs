@@ -36,4 +36,11 @@ public class AuthController(IAuthService authService) : Controller
     }
 
     #endregion
+
+    #region ForgotPassword
+    public IActionResult ForgotPassword()
+    {
+        return View();
+    }
+    #endregion
 }

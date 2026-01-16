@@ -1,21 +1,55 @@
 @{
-    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
     ViewData[index: "Title"] = "Login";
 }
 @model SliceCloud.Repository.ViewModels.LoginViewModel
 
-<div class="d-flex align-items-center justify-content-center">
-    <form method="post" asp-action="Login" asp-controller="Auth">
-        <div class=" mb-3">
-            <input type="email" class="form-control" placeholder=" john@exmaple.com" asp-for="Email">
+<div class="d-flex align-items-center justify-content-center h-100 p-2 p-md-5">
+    <div>
+        <div class="d-flex align-items-center justify-content-center mb-5 w-100">
+            <div class="d-flex align-items-center justify-content-center gap-2">
+                <img src="~/images/test2.jpg" alt="This is logo" width="15%" height="15%">
+                <h1 class="font-weight-bold custom-body-text-color">SLICECLOUD</h1>
+            </div>
         </div>
-        <span asp-validation-for="Email" class="text-danger"></span>
-        <div class="">
-            <input type="password" class="form-control" placeholder="John@123" asp-for="Password">
+        <h2 class="mb-4">Welcome,</h2>
+        <div>
+            <form method="post" asp-action="Login" asp-controller="Auth">
+                <div class="mb-4">
+                    <div class="d-flex align-items-center">
+                        <input type="email" class="form-control" placeholder=" john@exmaple.com" asp-for="Email">
+                        <img src="~/images/icons/user.png"
+                            style="display: inline; margin-left: -23px; vertical-align: middle">
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <span asp-validation-for="Email" class="text-danger"></span>
+                <div class="mb-4">
+                    <div class="d-flex align-items-center">
+                        <input type="password" class="form-control" asp-for="Password" id="custom-password-input"
+                            name="password" placeholder="Password*">
+                        <img src="~/images/icons/hidden.png" id="toggle_button_eye" 
+                            style="display: inline; margin-left: -23px; vertical-align: middle;" class="custom-cursor-pointer" onClick="toggle()">
+
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="mb-4 form-check">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <input type="checkbox" class="form-check-input" asp-for="RememberMe">
+                            <label class="form-check-label custom-cursor-pointer" for="RememberMe">Remember
+                                me</label>
+                        </div>
+                        <div>
+                            <a class="text-decoration-none .custom-link-color" asp-controller="Auth"
+                                asp-action="ForgotPassword" asp-route-email="@(Model?.Email ?? string.Empty)">Forgot
+                                Password?</a>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary w-100" type="submit">Login</button>
+            </form>
         </div>
-        <span asp-validation-for="Password" class="text-danger"></span>
-        <input type="checkbox" class="form-check-input" asp-for="RememberMe">
-        <label class="form-check-label" for="RememberMe" style="cursor: pointer;">Remember me</label>
-        <button class="btn btn-primary w-100" type="submit">Login</button>
-    </form>
+    </div>
 </div>
