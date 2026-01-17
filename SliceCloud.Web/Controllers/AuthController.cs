@@ -7,11 +7,11 @@ using SliceCloud.Service.Utils;
 
 namespace SliceCloud.Web.Controllers;
 
-
-public class AuthController(IAuthService authService, IJwtService jwtService) : Controller
+public class AuthController(IAuthService authService, IJwtService jwtService, IEmailSenderService emailSenderService) : Controller
 {
     private readonly IAuthService _authService = authService;
     private readonly IJwtService _jwtService = jwtService;
+    private readonly IEmailSenderService _emailSenderService = emailSenderService;
 
     #region Login GET
 
@@ -20,12 +20,12 @@ public class AuthController(IAuthService authService, IJwtService jwtService) : 
         try
         {
             (string? Email, string? Username)? user = SessionUtils.GetUser(HttpContext);
-            ClaimsPrincipal? principal = (ClaimsPrincipal?)null;
 
             if (user == null)
                 return View();
 
 
+            ClaimsPrincipal? principal = null;
             string? token = Request.Cookies["AuthToken"];
             if (token != null)
             {
@@ -92,11 +92,14 @@ public class AuthController(IAuthService authService, IJwtService jwtService) : 
                 }
                 return View(loginViewModel);
             }
-            if (usersLogin is not null)
+            string token = await _jwtService.GenerateJwtToken(loginViewModel.Email, loginViewModel.RememberMe);
+            CookieUtils.SaveJWTToken(Response, token);
+            if (loginViewModel.RememberMe)
             {
-                return RedirectToAction("Dashboard", "Dashboard");
+                CookieUtils.SaveUserData(Response, usersLogin);
             }
-            return View();
+            HttpContext.Session.SetString("username", usersLogin.User!.UserName!);
+            return RedirectToAction("Dashboard", "Dashboard");
         }
         catch
         {
@@ -107,14 +110,66 @@ public class AuthController(IAuthService authService, IJwtService jwtService) : 
 
     #endregion
 
-    #region ForgotPassword
-    public IActionResult ForgotPassword()
+    #region ForgotPassword GET
+
+    [HttpGet]
+    public IActionResult ForgotPassword(string email = "")
     {
-        return View();
+        try
+        {
+            return View(new ForgotPasswordViewModel { Email = email });
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "An error occurred while processing your request. Please try again.";
+            return View("Error");
+        }
     }
+
     #endregion
 
-    #region ResetPassword GET/POST
+    #region ForgotPassword POST
+
+    [HttpPost]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            bool userExists = await _authService.CheckIfUserExists(model.Email);
+            if (!userExists)
+            {
+                ModelState.AddModelError("Email", "No account found with this email.");
+                return View(model);
+            }
+
+            string resetToken = await _authService.GeneratePasswordResetToken(model.Email);
+            string? resetLink = Url.Action(
+                "ResetPassword",
+                "Auth",
+                new { token = resetToken },
+                Request.Scheme
+            );
+
+            await _emailSenderService.SendResetPasswordEmail(model.Email, resetLink);
+
+            TempData["SuccessMessage"] = "A password reset link has been sent to your email.";
+            return RedirectToAction("Login", "Auth");
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Failed to send reset email.";
+            return View(model);
+        }
+    }
+
+    #endregion
+
+    #region ResetPassword GET
+
     [HttpGet]
     public async Task<IActionResult> ResetPassword(string token)
     {
@@ -133,10 +188,10 @@ public class AuthController(IAuthService authService, IJwtService jwtService) : 
                 return RedirectToAction("Login");
             }
 
-            ResetPasswordViewModel? model = new ResetPasswordViewModel { Token = token };
+            ResetPasswordViewModel? resetPasswordViewModel = new ResetPasswordViewModel { Token = token };
             TempData["InfoMessage"] = "Please reset you password";
 
-            return View(model);
+            return View(resetPasswordViewModel);
         }
         catch (Exception)
         {
@@ -144,9 +199,11 @@ public class AuthController(IAuthService authService, IJwtService jwtService) : 
             return RedirectToAction("Login");
         }
     }
+
     #endregion
 
-    #region 
+    #region ResetPassword POST
+
     [HttpPost]
     public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
     {
@@ -180,9 +237,11 @@ public class AuthController(IAuthService authService, IJwtService jwtService) : 
             return View(model);
         }
     }
+
     #endregion
 
-    #region LogOut 
+    #region LogOut Method
+
     public IActionResult Logout()
     {
         try
@@ -197,9 +256,11 @@ public class AuthController(IAuthService authService, IJwtService jwtService) : 
             return RedirectToAction("Login", "Auth");
         }
     }
+
     #endregion
 
     #region RefreshToken 
+
     [HttpPost]
     public async Task<IActionResult> RefreshToken()
     {
@@ -231,5 +292,6 @@ public class AuthController(IAuthService authService, IJwtService jwtService) : 
             return RedirectToAction("Login", "Auth");
         }
     }
+
     #endregion
 }
