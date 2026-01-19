@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="apple-mobile-web-app-title" content="SliceCloud" />
+
+    <title>@ViewData[index: "Title"]</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+
+</head>
+
+<body>
+    <div class="container-fluid p-0">
+        <div class="row g-0 min-vh-100 custom-body-bg-color">
+            <div class="d-none d-md-block col-md-6">
+                <img src="~/images/test.jpg" alt="This is image" class="img-fluid h-100 w-100 object-fit-contain">
+            </div>
+            <div class="col-12 col-md-6">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/site.js"></script>
+
+
+    @if (TempData.Peek(key: "Toast") != null)
+    {
+        <script>
+            const toast = JSON.parse('@Html.Raw(TempData.Peek(key: "Toast"))');
+            const type = (toast.type || 'info').toLowerCase();
+            toastr[type](toast.message);
+        </script>
+    }
+
+
+</body>
+
+</html>

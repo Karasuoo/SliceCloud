@@ -1,4 +1,36 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
+﻿function toggle() {
+    let input_toggle = document.getElementById("toggle_button_eye");
+    let password_input = document.getElementById("custom-password-input");
+  
+    if (password_input.type === "password") {
+      password_input.type = "text";
+      input_toggle.src = "/images/icons/visibility.svg";
+    } else {
+      password_input.type = "password";
+      input_toggle.src = "/images/icons/visibility_off.svg";
+    }
+  }
+function toggle_new_password() {
+    let input_toggle = document.getElementById("toggle_button_eye_new_password");
+    let password_input = document.getElementById("custom-password-input_new_password");
+  
+    if (password_input.type === "password") {
+      password_input.type = "text";
+      input_toggle.src = "/images/icons/visibility.svg";
+    } else {
+      password_input.type = "password";
+      input_toggle.src = "/images/icons/visibility_off.svg";
+    }
+  }
+function toggle_confirm_password() {
+    let input_toggle = document.getElementById("toggle_button_eye_confirm_password");
+    let password_input = document.getElementById("custom-password-input_confirm_password");
+  
+    if (password_input.type === "password") {
+      password_input.type = "text";
+      input_toggle.src = "/images/icons/visibility.svg";
+    } else {
+      password_input.type = "password";
+      input_toggle.src = "/images/icons/visibility_off.svg";
+    }
+  }
