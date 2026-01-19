@@ -40,7 +40,7 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
                 SessionUtils.ClearSession(HttpContext);
                 return View();
             }
-            return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction("Dashboard", "Dashboard");
         }
         catch (Exception)
         {
@@ -112,7 +112,7 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
             }
 
             HttpContext.Session.SetString("username", usersLogin.User!.UserName!);
-            return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction("Dashboard", "Dashboard");
         }
         catch
         {

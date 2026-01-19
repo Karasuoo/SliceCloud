@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SliceCloud.Web.Controllers;
 
-public class DashboardController() : Controller
+public class CustomersController() : Controller
 {
 
-    #region Dashboard GET
-    public IActionResult Dashboard()
+    #region Customers GET
+    public IActionResult Customers()
     {
         return View();
     }
