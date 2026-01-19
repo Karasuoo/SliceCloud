@@ -5,8 +5,8 @@ namespace SliceCloud.Web.Controllers;
 public class DashboardController() : Controller
 {
 
-    #region Login GET
-    public IActionResult Dashboard()
+    #region Index GET
+    public IActionResult Index()
     {
         return View();
     }

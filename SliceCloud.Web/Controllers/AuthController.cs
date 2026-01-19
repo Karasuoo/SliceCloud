@@ -15,6 +15,7 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
 
     #region Login GET
 
+    [HttpGet]
     public IActionResult Login()
     {
         try
@@ -39,7 +40,7 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
                 SessionUtils.ClearSession(HttpContext);
                 return View();
             }
-            return RedirectToAction("Dashboard", "Dashboard");
+            return RedirectToAction("Index", "Dashboard");
         }
         catch (Exception)
         {
@@ -62,44 +63,56 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
                 return View(loginViewModel);
             }
 
-            UsersLogin? usersLogin = await _authService.AuthenticateUser(
+            UsersLogin? usersLogin = await _authService.AuthenticateUserAsync(
                          loginViewModel.Email!.ToLower(),
                          loginViewModel.Password!
                      );
 
             if (usersLogin is null)
             {
-                bool userExists = await _authService.CheckIfUserExists(loginViewModel.Email);
-                UsersLogin? userReset = await _authService.GetUserLoginByEmailAsync(loginViewModel.Email.ToLower());
-                if (userReset is not null && userReset.IsFirstLogin)
+                UsersLogin? userExists = await _authService.GetUserLoginByEmailAsync(loginViewModel.Email.ToLower());
+                if (userExists is not null)
                 {
-                    string resetToken = await _authService.GeneratePasswordResetToken(
-                        userReset.Email!
+                    if (userExists.IsFirstLogin)
+                    {
+                        string resetToken = await _authService.GeneratePasswordResetTokenAsync(
+                        userExists.Email!
                     );
 
-                    return RedirectToAction(
-                        "ResetPassword",
-                        "Auth",
-                        new { token = resetToken }
-                    );
+                        return RedirectToAction(
+                            "ResetPassword",
+                            "Auth",
+                            new { token = resetToken }
+                        );
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(
+                          "Password",
+                          "Invalid password. Try again or reset your password."
+                      );
+                    }
                 }
-                if (userExists)
+                else
                 {
                     ModelState.AddModelError(
-                        "Password",
-                        "Invalid password. Try again or reset your password."
-                    );
+                       "Email",
+                       "No user found with the provided email."
+                   );
                 }
                 return View(loginViewModel);
             }
-            string token = await _jwtService.GenerateJwtToken(loginViewModel.Email, loginViewModel.RememberMe);
+
+            string token = await _jwtService.GenerateJwtTokenAsync(loginViewModel.Email, loginViewModel.RememberMe);
             CookieUtils.SaveJWTToken(Response, token);
+
             if (loginViewModel.RememberMe)
             {
                 CookieUtils.SaveUserData(Response, usersLogin);
             }
+
             HttpContext.Session.SetString("username", usersLogin.User!.UserName!);
-            return RedirectToAction("Dashboard", "Dashboard");
+            return RedirectToAction("Index", "Dashboard");
         }
         catch
         {
@@ -139,14 +152,15 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
             {
                 return View(model);
             }
-            bool userExists = await _authService.CheckIfUserExists(model.Email);
-            if (!userExists)
+
+            UsersLogin? userExists = await _authService.GetUserLoginByEmailAsync(model.Email);
+            if (userExists is null)
             {
-                ModelState.AddModelError("Email", "No account found with this email.");
+                ModelState.AddModelError("Email", "No user found with the provided email.");
                 return View(model);
             }
 
-            string resetToken = await _authService.GeneratePasswordResetToken(model.Email);
+            string resetToken = await _authService.GeneratePasswordResetTokenAsync(model.Email);
             string? resetLink = Url.Action(
                 "ResetPassword",
                 "Auth",
@@ -154,7 +168,7 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
                 Request.Scheme
             );
 
-            await _emailSenderService.SendResetPasswordEmail(model.Email, resetLink);
+            await _emailSenderService.SendResetPasswordEmailAsync(model.Email, resetLink);
 
             TempData["SuccessMessage"] = "A password reset link has been sent to your email.";
             return RedirectToAction("Login", "Auth");
@@ -181,7 +195,7 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
                 return RedirectToAction("Login");
             }
 
-            bool isValid = await _authService.ValidatePasswordResetToken(token);
+            bool isValid = await _authService.ValidatePasswordResetTokenAsync(token);
             if (!isValid)
             {
                 TempData["ErrorMessage"] = "Invalid or expired reset link.";
@@ -214,14 +228,14 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
                 return View(model);
             }
 
-            bool isValid = await _authService.ValidatePasswordResetToken(model.Token ?? string.Empty);
+            bool isValid = await _authService.ValidatePasswordResetTokenAsync(model.Token ?? string.Empty);
             if (!isValid)
             {
                 ModelState.AddModelError("", "Invalid or expired reset link.");
                 return View(model);
             }
 
-            bool result = await _authService.UpdateUserPassword(model.Token ?? string.Empty, model.NewPassword!);
+            bool result = await _authService.UpdateUserPasswordAsync(model.Token ?? string.Empty, model.NewPassword!);
             if (!result)
             {
                 ModelState.AddModelError("", "Failed to reset password.");
@@ -281,7 +295,7 @@ public class AuthController(IAuthService authService, IJwtService jwtService, IE
             if (string.IsNullOrEmpty(email))
                 return RedirectToAction("Login", "Auth");
 
-            string? newToken = await _jwtService.GenerateJwtToken(email);
+            string? newToken = await _jwtService.GenerateJwtTokenAsync(email);
             CookieUtils.SaveJWTToken(Response, newToken);
 
             return Ok(new { success = true });

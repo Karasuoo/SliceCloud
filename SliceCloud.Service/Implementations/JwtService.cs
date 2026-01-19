@@ -34,7 +34,8 @@ public class JwtService : IJwtService
     }
 
     #region GenerateJwtToken
-    public async Task<string> GenerateJwtToken(string email, bool rememberMe = false)
+
+    public async Task<string> GenerateJwtTokenAsync(string email, bool rememberMe = false)
     {
         JwtSecurityTokenHandler tokenHandler = new();
         byte[] key = Encoding.UTF8.GetBytes(_key);
@@ -71,9 +72,11 @@ public class JwtService : IJwtService
         return tokenHandler.WriteToken(token);
 
     }
+
     #endregion
 
     #region ValidateToken
+
     public ClaimsPrincipal? ValidateToken(string token)
     {
         if (string.IsNullOrEmpty(token))
@@ -103,6 +106,7 @@ public class JwtService : IJwtService
             return null;
         }
     }
+    
     #endregion
 
 }

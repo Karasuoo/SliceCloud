@@ -12,6 +12,8 @@ public class EmailSenderService(IConfiguration configuration, IWebHostEnvironmen
     private readonly IConfiguration _configuration = configuration;
     private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
 
+    #region SendEmail
+
     public async Task SendEmailAsync(string toEmail, string subject, string htmlBody, string imagePath)
     {
         var smtpHost = _configuration["EmailSettings:SmtpHost"];
@@ -54,7 +56,11 @@ public class EmailSenderService(IConfiguration configuration, IWebHostEnvironmen
         }
     }
 
-    public async Task SendResetPasswordEmail(string toEmail, string? resetLink)
+    #endregion
+
+    #region SendResetPasswordEmail
+
+    public async Task SendResetPasswordEmailAsync(string toEmail, string? resetLink)
     {
         var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", "logo.png");
 
@@ -102,6 +108,8 @@ public class EmailSenderService(IConfiguration configuration, IWebHostEnvironmen
 
         await SendEmailAsync(toEmail, subject, body, imagePath);
     }
+
+    #endregion
 
 }
 

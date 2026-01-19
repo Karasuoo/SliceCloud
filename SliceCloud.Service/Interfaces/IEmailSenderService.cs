@@ -18,5 +18,5 @@ public interface IEmailSenderService
     /// <param name="toEmail">The recipient's email address.</param>
     /// <param name="resetLink">The password reset link to include in the email.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task SendResetPasswordEmail(string toEmail, string? resetLink);
+    Task SendResetPasswordEmailAsync(string toEmail, string? resetLink);
 }

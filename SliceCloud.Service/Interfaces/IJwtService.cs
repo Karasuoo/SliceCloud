@@ -10,7 +10,7 @@ public interface IJwtService
     /// <param name="email">The email of the user.</param>
     /// <param name="rememberMe">Indicates whether the token should have an extended expiration time.</param>
     /// <returns>A task that returns the generated JWT token as a string.</returns>
-    Task<string> GenerateJwtToken(string email, bool rememberMe = false);
+    Task<string> GenerateJwtTokenAsync(string email, bool rememberMe = false);
 
     /// <summary>
     /// Validates a JWT token and retrieves the claims principal.

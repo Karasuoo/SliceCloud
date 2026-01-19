@@ -13,20 +13,20 @@ public class UsersLoginRepository(SliceCloudContext context) : IUsersLoginReposi
     {
         return await _context.UsersLogins.FirstOrDefaultAsync(u => u.Email!.ToLower() == userEmail.ToLower());
     }
-    
-    public async Task<UsersLogin?> GetUserLoginAsync(string userEmail, string userPassword)
+
+    public async Task<UsersLogin?> GetUserLoginAsync(string userEmail, string userHashedPassword)
     {
-        UsersLogin? user = await _context.UsersLogins.Include(u => u.User).FirstOrDefaultAsync(
+        UsersLogin? usersLogin = await _context.UsersLogins.Include(u => u.User).FirstOrDefaultAsync(
             u => u.Email == userEmail
-            && u.PasswordHash == userPassword
+            && u.PasswordHash == userHashedPassword
             && u.IsFirstLogin == false
             && u.User!.IsDeleted == false
             && u.User.Status == 1
             );
-        return user;
+        return usersLogin;
     }
 
-    public async Task SavePasswordResetToken(int userId, string passwordResetToken, DateTime expiration, bool isUsed)
+    public async Task SavePasswordResetTokenAsync(int userId, string passwordResetToken, DateTime expiration, bool isUsed)
     {
         UsersLogin? user = await _context.UsersLogins.FindAsync(userId);
         if (user != null)
@@ -38,12 +38,12 @@ public class UsersLoginRepository(SliceCloudContext context) : IUsersLoginReposi
         }
     }
 
-    public async Task<UsersLogin?> GetUserByResetToken(string resetToken)
+    public async Task<UsersLogin?> GetUserByResetTokenAsync(string resetToken)
     {
         return await _context.UsersLogins.FirstOrDefaultAsync(u => u.ResetToken == resetToken);
     }
 
-    public async Task<bool> SetUserPassword(int userLoginId, string newPassword)
+    public async Task<bool> SetUserPasswordAsync(int userLoginId, string newPassword)
     {
         UsersLogin? user = await _context.UsersLogins.FindAsync(userLoginId);
         if (user == null)
@@ -65,11 +65,18 @@ public class UsersLoginRepository(SliceCloudContext context) : IUsersLoginReposi
         return true;
     }
 
-    public async Task InvalidateResetToken(UsersLogin usersLogin)
+    public async Task<bool> InvalidateResetTokenAsync(int userLoginId)
     {
+        UsersLogin? usersLogin = await _context.UsersLogins
+       .FirstOrDefaultAsync(u => u.UserLoginId == userLoginId);
+
+        if (usersLogin == null)
+            return false;
+
         usersLogin.IsResetTokenUsed = true;
-        _context.UsersLogins.Update(usersLogin);
         await _context.SaveChangesAsync();
+
+        return true;
     }
 
 }

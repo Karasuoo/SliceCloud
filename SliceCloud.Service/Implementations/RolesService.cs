@@ -8,8 +8,12 @@ public class RolesService(IRolesRepository rolesRepository) : IRolesService
 {
     private readonly IRolesRepository _rolesRepository = rolesRepository;
 
+    #region GetRoleById
+
     public async Task<Role?> GetRoleByIdAsync(int id)
     {
         return await _rolesRepository.GetRoleByIdAsync(id);
     }
+
+    #endregion
 }

@@ -1,6 +1,7 @@
 using SliceCloud.Repository.Interfaces;
 using SliceCloud.Repository.Models;
 using SliceCloud.Service.Interfaces;
+using SliceCloud.Service.Utils;
 
 namespace SliceCloud.Service.Implementations;
 
@@ -8,39 +9,42 @@ public class AuthService(IUsersLoginRepository usersLoginRepository) : IAuthServ
 {
     private readonly IUsersLoginRepository _usersLoginRepository = usersLoginRepository;
 
-    public async Task<UsersLogin?> AuthenticateUser(string email, string password)
+    #region AuthenticateUser
+
+    public async Task<UsersLogin?> AuthenticateUserAsync(string userEmail, string userPassword)
     {
-        UsersLogin? user = await _usersLoginRepository.GetUserLoginAsync(email, password);
+        string hashedPassword = PasswordUtils.HashPassword(userPassword);
+        UsersLogin? usersLogin = await _usersLoginRepository.GetUserLoginAsync(userEmail, hashedPassword);
 
-        if (user == null) return null;
+        if (usersLogin == null) return null;
 
-        return user;
+        return usersLogin;
     }
 
-    public async Task<UsersLogin?> GetUserLoginByEmailAsync(string email)
+    #endregion
+
+    #region GetUserLoginByEmail
+
+    public async Task<UsersLogin?> GetUserLoginByEmailAsync(string userEmail)
     {
-        UsersLogin? usersLogin = await _usersLoginRepository.GetUserLoginByEmailAsync(email);
+        UsersLogin? usersLogin = await _usersLoginRepository.GetUserLoginByEmailAsync(userEmail);
         if (usersLogin is not null)
             return usersLogin;
         return null;
     }
-    
-    public async Task<bool> CheckIfUserExists(string email)
-    {
-        UsersLogin? usersLogin = await _usersLoginRepository.GetUserLoginByEmailAsync(email);
-        if (usersLogin is not null)
-            return true;
-        return false;
-    }
 
-    public async Task<string> GeneratePasswordResetToken(string email)
+    #endregion
+
+    #region GeneratePasswordResetToken
+
+    public async Task<string> GeneratePasswordResetTokenAsync(string userEmail)
     {
-        UsersLogin? user = await _usersLoginRepository.GetUserLoginByEmailAsync(email);
-        if (user == null) return string.Empty;
+        UsersLogin? usersLogin = await _usersLoginRepository.GetUserLoginByEmailAsync(userEmail);
+        if (usersLogin == null) return string.Empty;
 
         string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
 
-        await _usersLoginRepository.SavePasswordResetToken(user.UserLoginId,
+        await _usersLoginRepository.SavePasswordResetTokenAsync(usersLogin.UserLoginId,
           token,
           DateTime.UtcNow.AddHours(24),
           false);
@@ -48,34 +52,51 @@ public class AuthService(IUsersLoginRepository usersLoginRepository) : IAuthServ
         return token;
     }
 
-    public async Task<bool> ValidatePasswordResetToken(string token)
+    #endregion
+
+    #region ValidatePasswordResetToken
+
+    public async Task<bool> ValidatePasswordResetTokenAsync(string token)
     {
-        UsersLogin? tokenEntry = await _usersLoginRepository.GetUserByResetToken(token);
-        if (tokenEntry == null || tokenEntry.ResetTokenExpiration.GetValueOrDefault() < DateTime.UtcNow || tokenEntry.IsResetTokenUsed == true)
+        UsersLogin? usersLogin = await _usersLoginRepository.GetUserByResetTokenAsync(token);
+        if (usersLogin == null || usersLogin.ResetTokenExpiration.GetValueOrDefault() < DateTime.UtcNow || usersLogin.IsResetTokenUsed == true)
         {
             return false;
         }
         return true;
     }
 
-    public async Task<bool> UpdateUserPassword(string token, string newPassword)
+    #endregion
+
+    #region UpdateUserPassword
+
+    public async Task<bool> UpdateUserPasswordAsync(string token, string newPassword)
     {
-        UsersLogin? user = await _usersLoginRepository.GetUserByResetToken(token);
-        if (user == null || user.ResetTokenExpiration.GetValueOrDefault() < DateTime.UtcNow || user.IsResetTokenUsed == true)
+        UsersLogin? usersLogin = await _usersLoginRepository.GetUserByResetTokenAsync(token);
+
+        if (usersLogin == null || usersLogin.ResetTokenExpiration.GetValueOrDefault() < DateTime.UtcNow || usersLogin.IsResetTokenUsed == true)
         {
             return false;
         }
 
-        bool passwordUpdated = await _usersLoginRepository.SetUserPassword(user.UserLoginId, newPassword);
+        string hashedPassword = PasswordUtils.HashPassword(newPassword);
+        bool passwordUpdated = await _usersLoginRepository.SetUserPasswordAsync(usersLogin.UserLoginId, hashedPassword);
         if (!passwordUpdated)
         {
             return false;
         }
 
-        user.IsResetTokenUsed = true;
-        user.IsFirstLogin = false;
-        await _usersLoginRepository.InvalidateResetToken(user);
+        usersLogin.IsResetTokenUsed = true;
+        usersLogin.IsFirstLogin = false;
+
+        bool isResetTokenInvalidated = await _usersLoginRepository.InvalidateResetTokenAsync(usersLogin.UserLoginId);
+        if (!isResetTokenInvalidated)
+        {
+            return false;
+        }
 
         return true;
     }
+
+    #endregion
 }

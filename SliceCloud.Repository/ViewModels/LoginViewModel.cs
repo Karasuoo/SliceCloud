@@ -13,5 +13,6 @@ public class LoginViewModel
     [DataType(DataType.Password)]
     [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 100 characters long.")]
     public string Password { get; set; } = string.Empty;
+    
     public bool RememberMe { get; set; }
 }

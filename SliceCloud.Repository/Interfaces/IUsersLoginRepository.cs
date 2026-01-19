@@ -4,12 +4,18 @@ namespace SliceCloud.Repository.Interfaces;
 
 public interface IUsersLoginRepository
 {
-    Task<UsersLogin?> GetUserLoginAsync(string email, string password);
+    /// <summary>
+    /// Retrieves a user login details by their email & hashed password asynchronously.
+    /// </summary>
+    /// <param name="userEmail">The email of the user to retrieve.</param>
+    /// <param name="userHashedPassword">The password of the user to retrieve.</param>
+    /// <returns>A task that returns the user login details if found, otherwise null.</returns>
+    Task<UsersLogin?> GetUserLoginAsync(string userEmail, string userHashedPassword);
 
     /// <summary>
     /// Retrieves a user by their email asynchronously.
     /// </summary>
-    /// <param name="email">The email of the user to retrieve.</param>
+    /// <param name="userEmail">The email of the user to retrieve.</param>
     /// <returns>A task that returns the user if found, otherwise null.</returns>
     Task<UsersLogin?> GetUserLoginByEmailAsync(string userEmail);
 
@@ -21,14 +27,19 @@ public interface IUsersLoginRepository
     /// <param name="expiration">The expiration date of the token.</param>
     /// <param name="used">Indicates whether the token has been used.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task SavePasswordResetToken(
+    Task SavePasswordResetTokenAsync(
         int userId,
         string passwordResetToken,
         DateTime expiration,
         bool isUsed
     );
 
-    Task<UsersLogin?> GetUserByResetToken(string resetToken);
+    /// <summary>
+    /// Retrieves a user login details by their resetToken asynchronously.
+    /// </summary>
+    /// <param name="resetToken">The email of the user to retrieve.</param>
+    /// <returns>A task that returns the user login details if found, otherwise null.</returns>
+    Task<UsersLogin?> GetUserByResetTokenAsync(string resetToken);
 
     /// <summary>
     /// Sets a new password for a user.
@@ -36,12 +47,12 @@ public interface IUsersLoginRepository
     /// <param name="userLoginId">The ID of the user login to update.</param>
     /// <param name="newPassword">The new password to set.</param>
     /// <returns>A task that returns true if the password was updated successfully, otherwise false.</returns>
-    Task<bool> SetUserPassword(int userLoginId, string newPassword);
+    Task<bool> SetUserPasswordAsync(int userLoginId, string newPassword);
 
     /// <summary>
     /// Invalidates a password reset token for a user.
     /// </summary>
-    /// <param name="user">The user whose reset token should be invalidated.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    Task InvalidateResetToken(UsersLogin usersLogin);
+    /// <param name="usersLogin">The user whose reset token should be invalidated.</param>
+    /// <returns>A task that returns true if the token is invalidated successfully, otherwise false.</returns>
+    Task<bool> InvalidateResetTokenAsync(int userLoginId);
 }
