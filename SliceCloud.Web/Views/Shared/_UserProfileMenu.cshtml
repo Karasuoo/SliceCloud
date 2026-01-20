@@ -1,0 +1,53 @@
+@using System.Security.Claims
+
+@{
+    string profileImagePath = "images/icons/default_pfp.svg";
+    string? username = User?.FindFirst(type: "username")?.Value;
+}
+<div class="btn-group d-flex justify-content-end align-items-center">
+    <img src="/@profileImagePath" alt="Profile Image" class="dropdown-toggle rounded-circle" data-bs-toggle="dropdown"
+        data-bs-display="static" aria-expanded="false" width="40" height="40" style="cursor: pointer;">
+
+    <ul class="dropdown-menu dropdown-menu-lg-end">
+        <li>
+            <a class="dropdown-item d-flex align-items-center" asp-controller="MyProfile" asp-action="MyProfile">
+
+                <img src="/@profileImagePath" class="rounded-circle" width="32" height="32"
+                    style="object-fit: cover;" />
+
+                <span class="ms-3">@username</span>
+            </a>
+        </li>
+
+        <li>
+            <hr class="dropdown-divider" />
+        </li>
+
+        <li>
+            <a class="dropdown-item" asp-controller="MyProfile" asp-action="MyProfile">
+                <div class="d-flex gap-3 align-items-center">
+                    <img src="~/images/icons/profile.svg" alt="">
+                    <span>My Profile</span>
+                </div>
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item" asp-controller="MyProfile" asp-action="MyProfileChangePassword">
+                <div class="d-flex gap-3 align-items-center">
+                    <img src="~/images/icons/change_password.svg" alt="">
+                    <span>Change Password</span>
+                </div>
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <div class="d-flex gap-3 align-items-center">
+                    <img src="~/images/icons/logout.svg" alt="">
+                    <span>Logout</span>
+                </div>
+            </a>
+        </li>
+    </ul>
+</div>
