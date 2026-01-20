@@ -1,0 +1,53 @@
+@model string
+@using SliceCloud.Repository.ViewModels
+@using SliceCloud.Web.Helpers
+@using System.Security.Claims
+
+@{
+    string? currentController = ViewContext.RouteData.Values[key: "Controller"]?.ToString();
+    List<SidebarMenuItemViewModel>? menuItems = SidebarMenuProvider.GetMenu() ?? new List<SidebarMenuItemViewModel>();
+}
+
+<div class="@(Model == "desktop" ? "d-none d-xxl-flex flex-column bg-white wrapper sidebar" : "offcanvas-body p-0")">
+    <ul class="list-unstyled d-flex flex-column gap-2">
+
+        <li class="@(Model == "desktop" ? "mb-3 mt-2 text-center" : "offcanvas-header")">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                    <img src="~/images/logo.png" alt="This is logo image" class="sidebar-logo" />
+                    <div>
+                        <h5 class="fw-bold custom-body-text-color">SliceCloud</h5>
+                    </div>
+                </div>
+                <div class="@(Model == "desktop" ? "d-none" : "d-block")">
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+        </li>
+        @foreach (SidebarMenuItemViewModel item in menuItems)
+        {
+            bool isActive = string.Equals(
+            currentController,
+            item.Controller,
+            StringComparison.OrdinalIgnoreCase
+            );
+
+
+            <li class="ps-4 p-2 w-100 @(isActive ? "custom-active-ul-item-bg-color" : "")">
+                <a asp-controller="@item.Controller" asp-action="@item.Action" class="pe-auto text-decoration-none"
+                    aria-current="@(isActive ? "page" : null)">
+
+                    <div class="d-flex justify-content-start align-items-center gap-2">
+                        <img src="~/images/navbar-icons-rms/@(isActive? item.ActiveIcon: item.Icon)" loading="lazy"
+                            alt="This is @item.Controller image" />
+                        <span class="@(isActive ? "custom-active-ul-item-text-color" : "text-muted") h6 m-0 p-0">
+                            @item.Text
+                        </span>
+                    </div>
+
+                </a>
+            </li>
+        }
+    </ul>
+</div>

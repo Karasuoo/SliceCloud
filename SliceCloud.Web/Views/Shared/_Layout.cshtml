@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using SliceCloud.Repository.ViewModels
+@using SliceCloud.Web.Helpers
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -9,19 +11,72 @@
     <title>@ViewData[index: "Title"]</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
+    @RenderSection(name: "Styles", required: false)
+
+    <link rel="icon" type="image/x-icon" href="~/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/favicon/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="~/favicon/favicon-48x48.png">
+    <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#fff">
+    <meta name="application-name" content="Image to Favicon From Poper">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/favicon/apple-touch-icon-180x180.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 
 <body>
-    <main role="main">
-        @RenderBody()
-    </main>
-    </footer>
-    
+    @{
+        string? currentController = ViewContext.RouteData.Values[key: "Controller"]?.ToString();
+        List<SidebarMenuItemViewModel>? menuItems = SidebarMenuProvider.GetMenu() ?? new List<SidebarMenuItemViewModel>();
+    }
+    <div class="container-fluid p-0 m-0" id="main-content">
+        <div class="d-flex flex-row w-100">
+
+            @await Html.PartialAsync(partialViewName: "_Sidebar", model: "desktop")
+
+            <div class="custom-body-page-color flex-grow-1">
+                <div class="custom-navbar-bg-color d-flex justify-content-between align-items-center p-3 w-100">
+                    <div>
+                        <img src="~/images/icons/list.svg" alt="This is list icon" class="d-block d-xxl-none"
+                            data-bs-toggle="offcanvas" href="#sidebar-off-canvas" role="button"
+                            aria-controls="sidebar-off-canvas">
+                    </div>
+                    <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar-off-canvas"
+                        aria-labelledby="side-bar-offcanvas">
+                        @await Html.PartialAsync(partialViewName: "_Sidebar", model: "mobile")
+                    </div>
+                    @await Html.PartialAsync(partialViewName: "_UserProfileMenu")
+
+                </div>
+                <main role="main">
+                    @RenderBody()
+                </main>
+            </div>
+
+        </div>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/site.js"></script>
+
+
+    @if (TempData.Peek(key: "Toast") != null)
+    {
+        <script>
+            const toast = JSON.parse('@Html.Raw(TempData.Peek(key: "Toast"))');
+            const type = (toast.type || 'info').toLowerCase();
+            toastr[type](toast.message);
+        </script>
+    }
+
+    @RenderSection(name: "Scripts", required: false)
 </body>
 
 </html>
